@@ -1,0 +1,376 @@
+package Fonctions
+
+var A, B []int
+var Gestes []string
+
+// pa prend la carte du sommet de B et la pose au sommet de A (rien si B est vide). a modif
+
+func PA(A, B *[]int) {
+	pileA, pileB := *A, *B
+	if len(pileB) > 0 {
+		carte := pileB[0]
+		pileA = append([]int{carte}, pileA...) // Ajoute la carte au début de A
+		pileB = pileB[1:]                      // Retire la carte de B
+		*A, *B = pileA, pileB
+		Gestes = append(Gestes, "pa")
+	}
+}
+
+// pb prend la carte du sommet de A et la pose au sommet de B (rien si A est vide).
+func PB(A, B *[]int) {
+	pileA, pileB := *A, *B
+	if len(pileA) > 0 {
+		carte := pileA[0]
+		pileB = append([]int{carte}, pileB...) // Ajoute la carte au début de B
+		pileA = pileA[1:]                      // Retire la carte de A
+		*A, *B = pileA, pileB
+		Gestes = append(Gestes, "pb")
+	}
+}
+
+
+
+package Fonctions
+
+// ra fait descendre la carte du sommet de A tout au fond.
+func RA(A []int) {
+	premier := A[0]
+	copy(A, A[1:])
+	A[len(A)-1] = premier
+	Gestes = append(Gestes, "ra")
+}
+
+// rb fait descendre la carte du sommet de B tout au fond.
+func RB(B []int) {
+	if len(B) > 1 {
+		premier := B[0]
+		copy(B, B[1:])
+		B[len(B)-1] = premier
+	}
+	Gestes = append(Gestes, "rb")
+}
+
+func RR(A, B []int) {
+	if len(A) > 1 {
+		premier := A[0]
+		copy(A, A[1:])
+		A[len(A)-1] = premier
+	}
+	if len(B) > 1 {
+		premier := B[0]
+		copy(B, B[1:])
+		B[len(B)-1] = premier
+	}
+	Gestes = append(Gestes, "rr")
+}
+
+package Fonctions
+
+// rra remonte la carte du fond de A au sommet.
+func RRA(A []int) {
+	if len(A) > 1 {
+		dernier := A[len(A)-1]
+		copy(A[1:], A[:len(A)-1])
+		A[0] = dernier
+	}
+	Gestes = append(Gestes, "rra")
+}
+
+// rrb remonte la carte du fond de B au sommet.
+func RRB(B []int) {
+	if len(B) > 1 {
+		dernier := B[len(B)-1]
+		copy(B[1:], B[:len(B)-1])
+		B[0] = dernier
+	}
+	Gestes = append(Gestes, "rrb")
+}
+
+func RRR(A, B []int) {
+	if len(A) > 1 {
+		dernier := A[len(A)-1]
+		copy(A[1:], A[:len(A)-1])
+		A[0] = dernier
+	}
+	if len(B) > 1 {
+		dernier := B[len(B)-1]
+		copy(B[1:], B[:len(B)-1])
+		B[0] = dernier
+	}
+	Gestes = append(Gestes, "rrr")
+}
+
+
+package Fonctions
+
+func SA(A []int) {
+	if len(A) >= 2 {
+		A[0], A[1] = A[1], A[0]
+	}
+	Gestes = append(Gestes, "sa")
+}
+
+func SB(B []int) {
+	if len(B) >= 2 {
+		B[0], B[1] = B[1], B[0]
+	}
+	Gestes = append(Gestes, "sb")
+}
+
+func SS(A, B []int) {
+	if len(A) >= 2 {
+		A[0], A[1] = A[1], A[0]
+	}
+	if len(B) >= 2 {
+		B[0], B[1] = B[1], B[0]
+	}
+	Gestes = append(Gestes, "ss")
+}
+
+
+
+package Fonctions
+
+func Tri3OuMoins(A []int) []int {
+	if EstRangee(A) {
+		return A
+	} else if len(A) == 2 {
+		SA(A)
+		return A
+	} else if len(A) == 3 {
+		// Cas 1 : Le plus grand élément est en position 0
+		if A[0] > A[1] && A[1] > A[2] {
+			RA(A)
+			SA(A)
+			return A
+		}
+		if A[0] > A[2] && A[2] > A[1] {
+			RA(A)
+			return A
+		}
+		// Cas 2 : Le plus grand élément est en position 1
+		if A[1] > A[0] && A[1] > A[2] && A[0] > A[2] {
+			RRA(A)
+			return A
+		}
+		if A[1] > A[0] && A[1] > A[2] && A[2] > A[0] {
+			RA(A)
+			SA(A)
+			RRA(A)
+			return A
+		}
+		// Cas 3 : Le plus grand élément est en position 2
+		if A[0] > A[1] {
+			SA(A)
+		}
+		return A
+	}
+	return A
+}
+
+
+package Fonctions
+
+func EstRangee(A []int) bool {
+	for i := 0; i < len(A)-1; i++ {
+		if A[i] > A[i+1] {
+			return false
+		}
+	}
+	return true
+}
+
+// parcours len de A et verifie que chaque nombre et plus petit que le prochain
+
+
+
+
+package Fonctions
+
+func QuiACoutMin(A, B []int) int {
+	//recherche le cout minimum de deplacement d'un chiffre au bon endroit
+	minCout := Cout(A, B, 0) //demarre mincout a A[0]
+	minIndice := 0
+
+	for i := 0; i < len(B); i++ { //parcours la pile B
+		coutActuel := Cout(A, B, i)
+		if coutActuel < minCout { //si le cout actuel est plus petit que le premier on le modifie
+			minCout = coutActuel
+			minIndice = i
+		}
+	}
+
+	return minIndice //on return l'indice du plus petit
+}
+
+func TrouverCible(i int, B, A []int) (int, int) {
+	cible := max(A)
+	chiffre := B[i]
+	indexcible := len(A) - 1
+
+	if chiffre > cible {
+		cible = min(A)
+		indexcible = 0
+	}
+	for i := 0; i < len(A); i++ {
+		if A[i] >= chiffre && A[i] < cible {
+			cible = A[i]
+			indexcible = i
+		}
+	}
+
+	return cible, indexcible
+}
+
+//___________________________________________________________________________________--
+
+func Cout(A, B []int, i int) int {
+	resCout := 0
+	indexchiffre := i
+	_, indexcible := TrouverCible(indexchiffre, B, A)
+
+	if indexchiffre <= len(B)/2 {
+		resCout += i
+		for range i {
+			RA(A)
+		}
+	} else if indexchiffre > len(B)/2 {
+		resCout = +(len(B) - i) + 1
+	}
+
+	//cout cible  == pareil
+	if indexcible <= len(A)/2 {
+		resCout += indexcible
+	} else if indexcible > len(A)/2 {
+		resCout = +(len(A) - i) + 1
+	}
+	if B[i] > max(A) {
+		resCout += 1 //rajoute un cout pour le mettre au fonc
+	}
+	return resCout + 1
+}
+
+
+package Fonctions
+
+func Appliquer(A, B []int, indexnombre int) {
+
+	cible, indexcible := TrouverCible(indexnombre, B, A)
+	nombre := B[indexnombre]
+
+	if indexcible == 0 && indexnombre == 0 {
+		PA(&A, &B)
+		if cible < nombre {
+			RA(A)
+		}
+
+	}
+	if indexcible == indexnombre && indexcible-len(A) == indexnombre-len(B) {
+		if indexnombre <= len(A)/2 {
+			for i := 0; i < indexnombre; i++ {
+				RR(A, B)
+			}
+		} else {
+			for i := 0; i < indexnombre; i++ {
+				RRR(A, B)
+			}
+		}
+	}
+	if indexnombre <= len(A)/2 {
+		for i := 0; i < indexnombre; i++ {
+			RB(B)
+		}
+	} else {
+		for i := 0; i < indexnombre; i++ {
+			RRB(B)
+		}
+	}
+
+	if indexcible <= len(A)/2 {
+
+		for i := 0; i < indexcible; i++ {
+			RB(A)
+		}
+	} else {
+		for i := 0; i < indexcible; i++ {
+			RRB(A)
+		}
+	}
+
+	if indexcible == 0 && indexnombre == 0 {
+		PA(&A, &B)
+		if cible < nombre {
+			RA(A)
+		}
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+package main
+
+import (
+	"code_pushswap/Fonctions"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
+func main() {
+
+	if len(os.Args) < 2 {
+		return
+	}
+	entree := os.Args[1] //recup arg
+	chiffres := strings.Fields(entree)
+
+	A := make([]int, len(chiffres)) //cree A et B
+	B := []int{}
+
+	for i, chiffreF := range chiffres {
+		chiffre, err := strconv.Atoi(chiffreF)
+		if err != nil {
+			fmt.Println("Erreur de formatage :", err)
+			return
+		}
+		A[i] = chiffre
+	}
+	//verif si il n'y a pas deux fois le meme chiffre
+	for i := 0; i < len(A)-1; i++ {
+		for j := i + 1; j < len(A); j++ {
+			if A[i] == A[j] {
+				fmt.Print("il y a plusieurs fois le meme chiffre dans la pile")
+				return
+			}
+		}
+	}
+
+	// verif if rien pile <=1 ou si elle est deja triee
+	if len(A) <= 1 || Fonctions.EstRangee(A) {
+		fmt.Print("liste deja triee")
+		return
+	}
+
+	// push dans B sauf 3 elements
+	for len(A) > 3 {
+		Fonctions.PB(&A, &B)
+	}
+
+	Fonctions.Tri3OuMoins(A)
+
+	fmt.Printf("%v ", A)
+	fmt.Printf("%v ", B)
+	fmt.Printf("%v ", Fonctions.Gestes)
+}
